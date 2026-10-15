@@ -304,3 +304,121 @@ Under **Project Settings -> Environment Variables**, add:
 5. Send a test message ("What projects has Ayush built?") and verify streaming SSE response.
 6. Check Developer Tools Application tab -> Cookies -> `nexus_session_token` has `Secure; HttpOnly; SameSite=Lax`.
 
+---
+
+## 9. Phase 6A: Diagnose and Fix Upstream Service Errors (Completed)
+
+### 1. Root Cause & Evidence
+- **User Symptom:**
+  - Asking *"Tell me about Ayush's education and technical experience."* resulted in the UI displaying:
+    `"Nexus AI encountered an upstream service issue. Please try again in a few moments."`
+- **Root Cause Identified:**
+  - Direct execution against the Groq API revealed that the free-tier daily token ceiling for `openai/gpt-oss-120b` was temporarily reached during extensive verification runs:
+    `Status: 429`
+    `Error message: Rate limit reached for model openai/gpt-oss-120b in organization org_01kt8mvks0ec9br1rtw2dbdvme service tier on_demand on tokens per day (TPD): Limit 200000, Used 199847, Requested 1303. Please try again in 8m16.8s.`
+  - In `app/api/chat/route.ts`, the previous `catch (apiError)` block converted all Groq failures into a generic HTTP `502 Bad Gateway` with the message *"Nexus AI encountered an upstream service issue. Please try again in a few moments."*, obscuring the actual quota/rate-limit status.
+  - When the user retried, the previous implementation inserted a second duplicate `user` message into the Supabase `messages` table before Groq was called, creating consecutive unanswered user turns and orphaning 1-message conversations in `conversations`.
+  - In `components/chat/nexus-chat-window.tsx`, an error event emitted inside the SSE stream (`payload.type === "error"`) was inadvertently swallowed by the `try ... catch` block intended only for skipping partial JSON lines.
+
+### 2. Targeted Fixes Implemented
+1. **Granular Groq Error Classification (`app/api/chat/route.ts`):**
+   - **HTTP 429 (Provider Quota / Rate Limit):** Parses cooldown duration from provider message, returns HTTP 429 with `code: "UPSTREAM_RATE_LIMIT"`, `Retry-After: <seconds>`, and a clear, user-friendly explanation (*"Nexus AI is temporarily at capacity. The AI provider's token quota has been reached. Please try again in a few moments or contact Ayush directly."*).
+   - **HTTP 401 (Authentication Failure):** Returns HTTP 503 with `code: "UPSTREAM_AUTH_ERROR"` and safe message.
+   - **HTTP 404 / 400 (Model Unavailable):** Returns HTTP 503 with `code: "UPSTREAM_MODEL_ERROR"`.
+   - **HTTP 500 / 502 / 503 / 504 (Outage / Timeout):** Returns HTTP 502 with `code: "UPSTREAM_SERVICE_ERROR"`.
+2. **Retry Deduplication & Conversation Consistency (`app/api/chat/route.ts`):**
+   - For existing conversations: inspects the last message in `messages`. If it is already an identical `user` message without an assistant reply, reuses it without inserting a duplicate DB row or sending duplicate user turns to Groq.
+   - For new conversations: if Groq fails before streaming starts, automatically deletes the newly created empty conversation row from Supabase so no orphaned conversations linger.
+   - For SSE streams: if a stream is interrupted mid-transfer, emits `{ type: "error" }` and avoids persisting a truncated half-sentence as a completed assistant reply.
+3. **Structured Safe Diagnostics (`app/api/chat/route.ts`):**
+   - Added request correlation ID (`reqId`) and `logStage(stage, message, meta)`.
+   - Logs timestamped duration and sanitized error codes (`status`, `errCode`, `sanitizedMsg`).
+   - Strictly redacts raw API keys, bearer tokens, cookies, and sensitive payload text.
+4. **Stream Parser Hardening (`components/chat/nexus-chat-window.tsx`):**
+   - Isolated `JSON.parse` in its own `try/catch` for partial chunks.
+   - Handled `payload.type === "error"` cleanly outside the JSON parse catch, displaying the error in the chat UI.
+5. **Configurable Model Override (`lib/groq/client.ts`):**
+   - Added `process.env.GROQ_MODEL` fallback (defaulting to the approved primary model `openai/gpt-oss-120b`).
+   - Added `_resetGroqClient()` for unit test isolation.
+
+### 3. Verification & Actual Results
+| Check / Test | Command Executed | Result | Details |
+| :--- | :--- | :--- | :--- |
+| **TypeScript Compilation** | `npx tsc --noEmit` | **PASSED** | Exit code 0 — 0 errors |
+| **ESLint Validation** | `npm run lint` | **PASSED** | Exit code 0 — 0 errors |
+| **Next.js Production Build** | `npm run build` | **PASSED** | Exit code 0 — Turbopack compiled successfully in 4.6s |
+| **Security Test Suite** | `node --env-file=.env.local tests/verify-chat-security.mjs` | **PASSED** | Exit code 0 — All 9 security tests passed |
+| **Live Supabase & Persistence Suite** | `node --env-file=.env.local tests/verify-live-supabase.mjs` | **PASSED** | Exit code 0 — All 5 tests passed; retry deduplication verified (exactly 1 user row stored on retry) |
+| **Live Query Verification** | Real HTTP probe with *"Tell me about Ayush's education and technical experience."* | **PASSED** | HTTP 200 SSE stream completed in 3.85s (44,910 bytes streamed with full education & technical details) |
+
+### 4. Remaining Operational Constraints & Next Steps
+- **Groq Free-Tier Daily Quota (200,000 TPD):** The daily token limit on `openai/gpt-oss-120b` is an external Groq provider limitation. Under high visitor volume, requests will receive HTTP 429 with informative cooldown guidance and alternative contact links. To expand token limits for production traffic, upgrade to Groq Dev Tier.
+- **Deployment Status:** No deployment, commit, or push was performed. Code is verified locally and ready for user review.
+
+---
+
+## 10. Phase 7: Production Validation & Optimization (Completed)
+
+### 1. Production Deployment & Live Infrastructure Inspection
+- **Live Production URL:** `https://ayush-space-portfolio.vercel.app`
+- **Active Production Git Commit:** `57d8829` (`feat(nexus-ai): complete portfolio chatbot with supabase persistence, rate limiting & vercel readiness`)
+- **Hosting Platform:** Vercel (Production Region: `iad1` / Edge Pop: `bom1`)
+- **Discrepancy vs Local Working Tree:**
+  - Production is running commit `57d8829` (Phase 5). Core chatbot features (SSE streaming, Supabase persistence `isEphemeral: false`, cookie security `HttpOnly; Secure; SameSite=Lax`) are active and verified working.
+  - The local repository contains uncommitted Phase 6A/7 improvements: granular Groq error mapping (HTTP 429 `UPSTREAM_RATE_LIMIT` instead of generic 502), retry deduplication (`[db_reuse]`), orphaned conversation cleanup, and client-side SSE error parsing. Deploying these changes is recommended to bring production up to date.
+
+### 2. Live Production End-to-End Test Results (`tests/test-production-live.mjs`)
+Direct automated requests were executed against `https://ayush-space-portfolio.vercel.app`:
+
+| Test / Check | Target Endpoint | Status / Result | Verification Details |
+| :--- | :--- | :--- | :--- |
+| **Root Page & Launcher** | `GET /` | **PASSED (200 OK)** | Serves portfolio HTML with `<NexusChatLauncher />` and tooltip badge mounted. |
+| **Media Type Enforcement** | `POST /api/chat` (text/plain) | **PASSED (415)** | Returns HTTP 415 Unsupported Media Type for non-JSON requests. |
+| **Payload Size Limit** | `POST /api/chat` (>16KB) | **PASSED (413)** | Returns HTTP 413 Payload Too Large when body exceeds 16,384 bytes. |
+| **Cross-Session Isolation** | `POST /api/chat` (foreign convId) | **PASSED (404)** | Rejects attempts to access conversations belonging to another session with HTTP 404 Not Found. |
+| **Security Cookie Attributes** | `POST /api/chat` (new session) | **PASSED** | Live cookie header: `nexus_session_token=...; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000; Secure`. |
+| **Live Knowledge Grounding** | `POST /api/chat` ("What university does Ayush attend...?") | **PASSED (200 SSE)** | Streamed accurate, grounded response citing **Sage University, Indore** and **Bachelor of Technology in Artificial Intelligence and Machine Learning (2024–2028)**. |
+| **Multi-Turn Continuity** | `POST /api/chat` ("What are his key featured projects?") | **PASSED (200 SSE)** | Maintained conversation continuity using existing `conversationId`; accurately cited verified projects (**Car Evaluation, Brain Tumor Detection, Netflix Data Analysis**). |
+| **Database Hygiene** | Supabase `conversations` | **PASSED** | Probe test conversations generated during validation were safely deleted via admin client. |
+
+### 3. Security, Privacy, and Environment Review
+1. **Secret & Key Isolation:**
+   - `.env.local` is git-ignored (`git check-ignore .env.local` confirmed).
+   - Server-only secrets (`GROQ_API_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) are never exposed via `NEXT_PUBLIC_` prefixes.
+   - Client-side bundles contain zero secret keys, database credentials, or private identifiers.
+   - Request and error logs redact all keys, tokens, session hashes, and cookies.
+2. **Session Security & Privacy:**
+   - Anonymous visitor sessions use a cryptographically random 256-bit token (`crypto.randomBytes(32)`).
+   - Only the SHA-256 hash of the session token is stored in Supabase (`session_token_hash`). Raw tokens are never persisted in the database.
+   - Cookie settings: `HttpOnly; Secure; SameSite=Lax; Max-Age=2592000` (30 days).
+3. **Database Security & RLS:**
+   - Server-side database access uses `SUPABASE_SERVICE_ROLE_KEY` inside server-only route handlers.
+   - Remote RLS policies restrict public access; all visitor operations are scoped strictly by session ownership.
+   - Attempted access to foreign or non-existent conversation IDs returns HTTP 404 without leaking conversation existence.
+
+### 4. Database Maintenance & Cleanup
+- **30-Day Retention Policy:** Stored procedures `cleanup_expired_conversations()` and `cleanup_expired_rate_limits()` are deployed and active on Supabase PostgreSQL.
+- **RPC Verification:** Executed both functions directly; completed cleanly with 0 SQL errors.
+- **Automation Status:** Supabase `cron.job` runs daily at 03:00 UTC when `pg_cron` is enabled. For zero-dashboard maintenance, an optional Vercel Cron or GitHub Action can call these RPCs periodically.
+
+### 5. Reliability & Usability Verification
+- **Mobile Responsiveness:** Chat window adapts to 92vw with safe-area padding on mobile devices, floating above page navigation.
+- **Accessibility:** ARIA attributes (`role="dialog"`, `aria-expanded`, `aria-controls`, `aria-label`, `aria-live`) verified; Escape key dismisses the window; focus returns to the launcher button.
+- **Reduced Motion:** All CSS animations and pulse indicators honor `prefers-reduced-motion: reduce`.
+- **Token Efficiency:** System prompt is strictly bounded; temperature is clamped to `0.3`; max response tokens capped at `1536` to prevent runaway generation.
+
+### 6. Local Quality & Test Suite Summary
+| Check / Test Suite | Command | Result | Notes |
+| :--- | :--- | :--- | :--- |
+| **TypeScript Compiler** | `npx tsc --noEmit` | **PASSED** | 0 type errors across codebase |
+| **ESLint Validation** | `npm run lint` | **PASSED** | 0 lint warnings or errors |
+| **Production Build** | `npm run build` | **PASSED** | Turbopack compiled successfully |
+| **Security Suite (9 tests)** | `node --env-file=.env.local tests/verify-chat-security.mjs` | **PASSED** | 415, 400, 413, 404, SSE streaming, rate limiting, zero leaked secrets |
+| **Live Supabase Suite (5 tests)** | `node --env-file=.env.local tests/verify-live-supabase.mjs` | **PASSED** | First-turn, retry deduplication (`[db_reuse]`), cross-session 404, distributed rate limiting, cleanup RPCs |
+| **Production E2E Suite (6 tests)** | `node tests/test-production-live.mjs` | **PASSED** | Live production deployment verified against `https://ayush-space-portfolio.vercel.app` |
+
+### 7. Recommendations & Next Steps
+1. **Commit and Push:** Stage and commit the Phase 6A/7 enhancements (`app/api/chat/route.ts`, `components/chat/nexus-chat-window.tsx`, `lib/groq/client.ts`, test suites, and documentation) to `origin/main` to trigger Vercel's automatic production deployment.
+2. **Groq Tier Consideration:** The current free-tier quota (200,000 TPD) handles approximately 50-60 multi-turn conversations per day. For higher traffic portfolios, consider upgrading to the Groq Developer tier.
+
+

@@ -166,29 +166,34 @@ export const NexusChatWindow = ({ isOpen, onClose }: NexusChatWindowProps) => {
 
         for (const line of lines) {
           if (line.startsWith("data: ")) {
+            let payload: { type?: string; conversationId?: string; isEphemeral?: boolean; text?: string; message?: string } | null = null;
             try {
-              const payload = JSON.parse(line.slice(6));
-              if (payload.type === "meta") {
-                if (payload.conversationId) {
-                  setConversationId(payload.conversationId);
-                }
-                if (typeof payload.isEphemeral === "boolean") {
-                  setIsEphemeral(payload.isEphemeral);
-                }
-              } else if (payload.type === "chunk" && payload.text) {
-                accumulatedText += payload.text;
-                setMessages((prev) =>
-                  prev.map((msg) =>
-                    msg.id === assistantMsgId
-                      ? { ...msg, content: accumulatedText }
-                      : msg
-                  )
-                );
-              } else if (payload.type === "error") {
-                throw new Error(payload.message || "An interruption occurred while streaming.");
-              }
+              payload = JSON.parse(line.slice(6));
             } catch {
               // Ignore partial JSON in stream chunk
+              continue;
+            }
+
+            if (!payload) continue;
+
+            if (payload.type === "meta") {
+              if (payload.conversationId) {
+                setConversationId(payload.conversationId);
+              }
+              if (typeof payload.isEphemeral === "boolean") {
+                setIsEphemeral(payload.isEphemeral);
+              }
+            } else if (payload.type === "chunk" && payload.text) {
+              accumulatedText += payload.text;
+              setMessages((prev) =>
+                prev.map((msg) =>
+                  msg.id === assistantMsgId
+                    ? { ...msg, content: accumulatedText }
+                    : msg
+                )
+              );
+            } else if (payload.type === "error") {
+              throw new Error(payload.message || "An interruption occurred while streaming.");
             }
           }
         }

@@ -1,6 +1,6 @@
 import Groq from "groq-sdk";
 
-export const PRIMARY_GROQ_MODEL = "openai/gpt-oss-120b";
+export const PRIMARY_GROQ_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 
 let groqClientInstance: Groq | null = null;
 
@@ -26,4 +26,11 @@ export function getGroqClient(): Groq {
   });
 
   return groqClientInstance;
+}
+
+/**
+ * Resets the singleton instance (used for testing configuration changes).
+ */
+export function _resetGroqClient(): void {
+  groqClientInstance = null;
 }

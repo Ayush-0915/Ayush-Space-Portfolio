@@ -7,6 +7,7 @@ import {
   getConversation,
   getConversationMessages,
   addMessage,
+  deleteConversation,
   hashSessionToken,
 } from "@/lib/supabase/repository";
 import { enforceRateLimits, extractClientIp } from "@/lib/ratelimit";
@@ -155,10 +156,20 @@ export async function POST(req: Request) {
       );
     }
 
+    // Correlation ID and timing for safe diagnostics
+    const reqId = `req_${crypto.randomBytes(4).toString("hex")}`;
+    const startTime = Date.now();
+    const logStage = (stage: string, message: string, extra?: Record<string, unknown>) => {
+      const elapsed = Date.now() - startTime;
+      const meta = extra ? " " + JSON.stringify(extra) : "";
+      console.log(`[Nexus AI][${reqId}][${stage}][${elapsed}ms] ${message}${meta}`);
+    };
+
     // 6. Resolve or Create Conversation with Resilient Persistence & Ownership Verification
     let activeConversationId: string;
     let pastHistory: Array<{ role: MessageRole; content: string }> = [];
     let isEphemeral = false;
+    let isNewConversation = false;
 
     if (
       typeof conversationId === "string" &&
@@ -177,8 +188,19 @@ export async function POST(req: Request) {
           }
           activeConversationId = existing.id;
           const messages = await getConversationMessages(activeConversationId, sessionToken);
-          pastHistory = messages.map((m) => ({ role: m.role, content: m.content }));
-          await addMessage(activeConversationId, sessionToken, "user", cleanMessage);
+
+          // Retry Deduplication: if the last stored message is already an identical user turn
+          // with no assistant answer yet (due to previous provider failure), reuse it
+          const lastMsg = messages[messages.length - 1];
+          const isRetry = lastMsg && lastMsg.role === "user" && lastMsg.content.trim() === cleanMessage;
+
+          if (isRetry) {
+            logStage("db_reuse", "Reusing pending user message from uncompleted prior attempt");
+            pastHistory = messages.slice(0, -1).map((m) => ({ role: m.role, content: m.content }));
+          } else {
+            pastHistory = messages.map((m) => ({ role: m.role, content: m.content }));
+            await addMessage(activeConversationId, sessionToken, "user", cleanMessage);
+          }
         } catch {
           // If conversation lookup fails due to missing table or unowned record, reject with 404
           return NextResponse.json(
@@ -197,6 +219,7 @@ export async function POST(req: Request) {
         const summaryTitle = cleanMessage.slice(0, 40).replace(/[\r\n]+/g, " ");
         const newConversation = await createConversation(sessionToken, summaryTitle);
         activeConversationId = newConversation.id;
+        isNewConversation = true;
         await addMessage(activeConversationId, sessionToken, "user", cleanMessage);
       } catch (dbError) {
         const errMsg = dbError instanceof Error ? dbError.message : "Database error";
@@ -211,11 +234,17 @@ export async function POST(req: Request) {
     try {
       groq = getGroqClient();
     } catch (groqErr) {
-      console.error("Groq Client Initialization Error:", groqErr instanceof Error ? groqErr.message : groqErr);
+      logStage("groq_init", "Groq client initialization error", {
+        error: groqErr instanceof Error ? groqErr.message : "Initialization failure",
+      });
+      if (isNewConversation && !isEphemeral) {
+        await deleteConversation(activeConversationId, sessionToken).catch(() => {});
+      }
       return NextResponse.json(
         {
           error:
-            "Nexus AI service is currently unavailable. Please check system configuration.",
+            "Nexus AI service configuration issue. Please check system credentials.",
+          code: "UPSTREAM_CONFIG_ERROR",
         },
         { status: 503 }
       );
@@ -237,6 +266,7 @@ export async function POST(req: Request) {
     // 9. Invoke Groq Streaming Completion (Restricted tokens & low temperature)
     let groqStream;
     try {
+      logStage("groq_request", `Invoking Groq stream with model=${PRIMARY_GROQ_MODEL}`);
       groqStream = await groq.chat.completions.create({
         model: PRIMARY_GROQ_MODEL,
         messages: groqMessages,
@@ -244,15 +274,87 @@ export async function POST(req: Request) {
         max_tokens: 1536,
         stream: true,
       });
-    } catch (apiError) {
-      console.error(
-        "Groq API Completion Error:",
-        apiError instanceof Error ? apiError.message : "Provider failure"
-      );
+    } catch (apiError: unknown) {
+      const err = apiError as {
+        status?: number;
+        message?: string;
+        code?: string;
+        error?: { message?: string; type?: string; code?: string };
+      };
+      const status = err.status || 500;
+      const errMsg = err.error?.message || err.message || "Provider failure";
+      const errCode = err.error?.code || err.code || "unknown";
+
+      logStage("groq_error", "Groq API completion failure", {
+        status,
+        errCode,
+        sanitizedMsg: errMsg.slice(0, 160),
+      });
+
+      // Clean up orphaned new conversation so no empty conversation rows linger in Supabase
+      if (isNewConversation && !isEphemeral) {
+        await deleteConversation(activeConversationId, sessionToken).catch(() => {});
+      }
+
+      // A. Quota exhaustion or upstream rate limit (HTTP 429)
+      const isRateLimit =
+        status === 429 ||
+        errCode === "rate_limit_exceeded" ||
+        /rate limit|quota|tokens per day|tpd/i.test(errMsg);
+
+      if (isRateLimit) {
+        let retrySec = 60;
+        const matchCooldown = errMsg.match(/try again in (?:(\d+)m)?\s*(?:([\d.]+)s)?/i);
+        if (matchCooldown) {
+          const m = parseInt(matchCooldown[1] || "0", 10);
+          const s = Math.ceil(parseFloat(matchCooldown[2] || "0"));
+          retrySec = Math.max(1, m * 60 + s);
+        }
+
+        return NextResponse.json(
+          {
+            error:
+              "Nexus AI is temporarily at capacity. The AI provider's token quota has been reached. Please try again in a few moments or contact Ayush directly.",
+            retryAfter: retrySec,
+            code: "UPSTREAM_RATE_LIMIT",
+          },
+          {
+            status: 429,
+            headers: {
+              "Retry-After": retrySec.toString(),
+            },
+          }
+        );
+      }
+
+      // B. Authentication failure (HTTP 401)
+      if (status === 401 || /invalid api key|unauthorized/i.test(errMsg)) {
+        return NextResponse.json(
+          {
+            error: "Nexus AI service configuration issue. Please check API credentials.",
+            code: "UPSTREAM_AUTH_ERROR",
+          },
+          { status: 503 }
+        );
+      }
+
+      // C. Model unavailable (HTTP 404 or 400 model not found)
+      if (status === 404 || (status === 400 && /model/i.test(errMsg))) {
+        return NextResponse.json(
+          {
+            error: "Nexus AI configured model is currently unavailable.",
+            code: "UPSTREAM_MODEL_ERROR",
+          },
+          { status: 503 }
+        );
+      }
+
+      // D. Upstream outage, gateway error, or timeout (500/502/503/504)
       return NextResponse.json(
         {
           error:
             "Nexus AI encountered an upstream service issue. Please try again in a few moments.",
+          code: "UPSTREAM_SERVICE_ERROR",
         },
         { status: 502 }
       );
@@ -297,7 +399,9 @@ export async function POST(req: Request) {
                 accumulatedResponse.trim()
               );
             } catch (saveError) {
-              console.error("Failed to persist assistant response:", saveError);
+              logStage("db_save_error", "Failed to persist assistant response", {
+                error: saveError instanceof Error ? saveError.message : "Save error",
+              });
             }
           }
 
@@ -313,12 +417,14 @@ export async function POST(req: Request) {
           );
           controller.close();
         } catch (streamError) {
-          console.error("Streaming Generation Error:", streamError);
+          logStage("stream_error", "Streaming generation interrupted", {
+            error: streamError instanceof Error ? streamError.message : "Stream error",
+          });
           controller.enqueue(
             encoder.encode(
               `data: ${JSON.stringify({
                 type: "error",
-                message: "An interruption occurred while streaming the response.",
+                message: "An interruption occurred while streaming the response. Please try again.",
               })}\n\n`
             )
           );
