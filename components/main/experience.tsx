@@ -150,7 +150,7 @@ export const Experience = () => {
       transition={{ duration: 0.7, ease: "easeOut" }}
       className="relative mx-auto mt-8 w-full max-w-6xl px-5 py-20 md:mt-12 md:px-8"
     >
-      <h2 className="mb-10 text-2xl font-semibold text-white sm:text-3xl md:mb-14 md:text-4xl">
+      <h2 className="font-heading mb-10 text-2xl font-bold tracking-tight text-white sm:text-3xl md:mb-14 md:text-4xl">
         My Work Experience
       </h2>
 
@@ -195,26 +195,26 @@ export const Experience = () => {
 
                 {/* Left Column: Period, Title, Org, Role, Achievement Badge & Repo Link */}
                 <div className="flex flex-col">
-                  <h3 className="text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-4xl">
+                  <h3 className="font-mono text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-4xl">
                     {item.period}
                   </h3>
 
-                  <p className="mt-2 text-xl font-bold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-cyan-200 to-white sm:text-2xl">
+                  <p className="font-heading mt-2 text-xl font-bold leading-snug text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-cyan-200 to-white sm:text-2xl">
                     {item.event}
                   </p>
 
                   {item.role && (
-                    <p className="mt-1.5 text-sm font-semibold text-cyan-300">
+                    <p className="font-sans mt-1.5 text-sm font-semibold text-cyan-300">
                       {item.role}
                     </p>
                   )}
 
-                  <p className="mt-1 text-xs sm:text-sm font-medium leading-relaxed text-gray-300/90">
+                  <p className="font-sans mt-1 text-xs sm:text-sm font-medium leading-relaxed text-gray-300/90">
                     {item.org}
                   </p>
 
                   {item.trackOrContext && (
-                    <p className="mt-0.5 text-xs text-gray-400/80 leading-relaxed">
+                    <p className="font-mono mt-0.5 text-xs text-gray-400/80 leading-relaxed">
                       {item.trackOrContext}
                     </p>
                   )}
@@ -222,7 +222,7 @@ export const Experience = () => {
                   {/* Prominent Achievement Badge */}
                   {item.achievement && (
                     <div
-                      className={`mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold backdrop-blur-sm transition-all duration-300 ${
+                      className={`font-sans mt-3 inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold backdrop-blur-sm transition-all duration-300 ${
                         isAward
                           ? "border-amber-400/50 bg-gradient-to-r from-amber-500/20 via-purple-500/15 to-amber-500/10 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.25)]"
                           : "border-cyan-400/40 bg-gradient-to-r from-cyan-500/15 via-purple-500/15 to-transparent text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.18)]"
@@ -258,20 +258,20 @@ export const Experience = () => {
                   {/* Project Overview Callout */}
                   {item.project && (
                     <div className="mb-4 rounded-lg border border-[#7042f840] bg-[#0c0728]/80 p-3.5 sm:p-4 backdrop-blur-sm shadow-md">
-                      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-purple-300">
+                      <div className="font-mono mb-1 text-[11px] font-semibold uppercase tracking-wider text-purple-300">
                         Project Overview · {item.project.name}
                       </div>
-                      <p className="text-sm leading-relaxed text-gray-200">
+                      <p className="font-sans text-sm leading-[1.68] text-gray-200">
                         {item.project.summary}
                       </p>
                     </div>
                   )}
 
                   {/* Key Contributions */}
-                  <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-cyan-300">
+                  <div className="font-mono mb-2 text-xs font-semibold uppercase tracking-wider text-cyan-300">
                     Key Contributions &amp; Scope
                   </div>
-                  <ul className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-gray-300">
+                  <ul className="font-sans list-disc space-y-2 pl-5 text-sm leading-[1.68] text-gray-300/90">
                     {item.contributions.map((point) => (
                       <li key={point}>{point}</li>
                     ))}
@@ -280,10 +280,10 @@ export const Experience = () => {
                   {/* Verified Capabilities (if present) */}
                   {item.capabilities && item.capabilities.length > 0 && (
                     <div className="mt-4">
-                      <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-purple-300">
+                      <div className="font-mono mb-2 text-xs font-semibold uppercase tracking-wider text-purple-300">
                         Verified System Capabilities
                       </div>
-                      <ul className="list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-gray-300/90">
+                      <ul className="font-sans list-disc space-y-1.5 pl-5 text-sm leading-[1.68] text-gray-300/90">
                         {item.capabilities.map((cap) => (
                           <li key={cap}>{cap}</li>
                         ))}
@@ -294,14 +294,14 @@ export const Experience = () => {
                   {/* Technology Badges */}
                   {item.technologies && item.technologies.length > 0 && (
                     <div className="mt-5 pt-1">
-                      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                      <div className="font-mono mb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
                         Technologies &amp; Tools
                       </div>
                       <div className="flex flex-wrap gap-1.5">
                         {item.technologies.map((tech) => (
                           <span
                             key={tech}
-                            className="rounded-md border border-violet-500/30 bg-violet-950/40 px-2.5 py-0.5 text-xs font-medium text-cyan-200 shadow-sm"
+                            className="font-sans rounded-md border border-violet-500/30 bg-violet-950/40 px-2.5 py-0.5 text-xs font-medium text-cyan-200 shadow-sm"
                           >
                             {tech}
                           </span>

@@ -54,7 +54,7 @@ export const Navbar = () => {
             draggable={false}
             className="h-12 w-12 cursor-pointer object-contain sm:h-14 sm:w-14"
           />
-          <div className="ml-2 hidden text-sm font-semibold text-gray-300 lg:flex">Ayush Singh</div>
+          <div className="ml-2.5 hidden font-heading text-sm sm:text-base font-bold tracking-tight text-white lg:flex">Ayush Singh</div>
         </Link>
 
         {/* Web Navbar */}
@@ -68,7 +68,7 @@ export const Navbar = () => {
                   key={link.title}
                   href={link.link}
                   onClick={() => setActiveLink(link.link)}
-                  className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-medium transition-all duration-300 ${
+                  className={`font-sans whitespace-nowrap rounded-full border px-3 py-1.5 text-xs lg:text-[13px] font-medium tracking-wide transition-all duration-300 ${
                     isActive
                       ? "border-cyan-400/70 bg-cyan-500/20 text-cyan-200 shadow-[0_0_20px_rgba(34,211,238,0.28)]"
                       : "border-transparent text-gray-200 hover:border-violet-400/40 hover:bg-violet-500/15 hover:text-violet-200"
@@ -117,7 +117,7 @@ export const Navbar = () => {
                 <Link
                   key={link.title}
                   href={link.link}
-                  className={`w-full max-w-xs rounded-full border px-4 py-2 text-center text-sm font-medium transition-all duration-300 ${
+                  className={`font-sans w-full max-w-xs rounded-full border px-4 py-2 text-center text-sm font-medium transition-all duration-300 ${
                     isActive
                       ? "border-cyan-400/70 bg-cyan-500/20 text-cyan-200"
                       : "border-transparent text-gray-200 hover:border-violet-400/40 hover:bg-violet-500/15 hover:text-violet-200"

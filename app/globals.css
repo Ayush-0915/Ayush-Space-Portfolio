@@ -1,11 +1,20 @@
-@import url("https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-space-grotesk: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', monospace;
+  --font-cursive: 'Cedarville Cursive', cursive;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-space-grotesk), system-ui, -apple-system, sans-serif;
+}
+
 .cursive {
-  font-family: "Cedarville Cursive", cursive;
+  font-family: var(--font-cursive), cursive;
 }
 .Welcome-text {
   background: linear-gradient(
@@ -86,4 +95,128 @@ html {
 
 .orbit-float {
   animation: orbit-float 4.8s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 48s linear infinite;
+}
+
+@keyframes spin-reverse-slow {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-spin-reverse-slow {
+  animation: spin-reverse-slow 56s linear infinite;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 6s ease-in-out infinite;
+}
+
+@keyframes orbit-dash-travel {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -440;
+  }
+}
+
+.animate-dash-travel {
+  animation: orbit-dash-travel 18s linear infinite;
+}
+
+@keyframes orbit-dash-travel-reverse {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 440;
+  }
+}
+
+.animate-dash-travel-reverse {
+  animation: orbit-dash-travel-reverse 16s linear infinite;
+}
+
+@keyframes energy-shimmer {
+  0%, 100% {
+    opacity: 0.2;
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translate(5px, -3px) scale(1.03);
+  }
+}
+
+.animate-energy-shimmer {
+  animation: energy-shimmer 7s ease-in-out infinite;
+}
+
+@keyframes planet-float {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(2px, -4px);
+  }
+}
+
+.animate-planet-float {
+  animation: planet-float 5s ease-in-out infinite;
+}
+
+@keyframes beacon-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+}
+
+.animate-beacon-pulse {
+  animation: beacon-pulse 3s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-float,
+  .animate-spin-slow,
+  .animate-spin-reverse-slow,
+  .animate-pulse-subtle,
+  .animate-dash-travel,
+  .animate-dash-travel-reverse,
+  .animate-energy-shimmer,
+  .animate-planet-float,
+  .animate-beacon-pulse {
+    animation: none !important;
+  }
 }

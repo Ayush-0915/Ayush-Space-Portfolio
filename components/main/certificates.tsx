@@ -77,7 +77,7 @@ export const Certificates = () => {
       >
         <div className="Welcome-box mx-auto mb-8 border border-[#7042f88b] px-[7px] py-[8px] opacity-[0.9] sm:mb-10 md:mb-14">
           <SparklesIcon className="mr-[10px] h-5 w-5 text-[#b49bff]" />
-          <h2 className="Welcome-text text-[13px]">My Certificates</h2>
+          <span className="Welcome-text font-sans text-[12px] font-semibold uppercase tracking-wider">My Certificates</span>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
@@ -100,10 +100,10 @@ export const Certificates = () => {
                   priority
                 />
               </div>
-              <p className="text-sm font-semibold uppercase tracking-widest text-cyan-300/90">{certificate.period}</p>
-              <h3 className="mt-2 text-lg font-semibold leading-tight text-gray-100 sm:text-xl">{certificate.title}</h3>
-              <p className="mt-2 text-sm font-medium text-violet-200 sm:text-[0.95rem]">{certificate.issuer}</p>
-              <p className="mt-3 text-sm leading-relaxed text-gray-300 sm:mt-4">{certificate.details}</p>
+              <p className="font-mono text-xs font-semibold uppercase tracking-widest text-cyan-300/90">{certificate.period}</p>
+              <h3 className="font-heading mt-2 text-lg font-bold leading-tight text-gray-100 sm:text-xl">{certificate.title}</h3>
+              <p className="font-sans mt-1.5 text-xs sm:text-sm font-medium text-violet-200">{certificate.issuer}</p>
+              <p className="font-sans mt-2.5 text-xs sm:text-sm leading-relaxed text-gray-300/90">{certificate.details}</p>
             </motion.button>
           ))}
         </div>

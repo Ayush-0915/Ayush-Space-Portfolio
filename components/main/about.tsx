@@ -15,26 +15,26 @@ export const About = () => {
         className="Welcome-box py-[8px] px-[7px] border border-[#7042f88b] opacity-[0.9] mb-[20px]"
       >
         <SparklesIcon className="text-[#b49bff] mr-[10px] h-5 w-5" />
-        <h1 className="Welcome-text text-[13px]">About Me</h1>
+        <span className="Welcome-text font-sans text-[12px] font-semibold uppercase tracking-wider">About Me</span>
       </motion.div>
 
       <motion.h2
         variants={slideInFromLeft(0.3)}
-        className="mb-[20px] bg-gradient-to-r from-purple-500 to-cyan-500 bg-clip-text text-3xl font-semibold text-transparent sm:text-4xl"
+        className="mb-5 font-heading text-3xl sm:text-4xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-indigo-300"
       >
         Who am I?
       </motion.h2>
 
       <motion.div
         variants={slideInFromLeft(0.5)}
-        className="max-w-[820px] text-center text-base leading-relaxed text-gray-300 sm:text-lg"
+        className="max-w-[760px] text-center font-sans text-[15px] sm:text-base leading-[1.75] text-gray-300/90 space-y-3.5"
       >
-        <p className="mb-[15px]">
-          I&apos;m an <span className="text-cyan-400 font-semibold">Enthusiastic Machine Learning Engineer</span> with a strong interest in <span className="text-purple-400 font-semibold">AI-driven solutions</span>.
-        </p>
-        
         <p>
-          I&apos;m skilled in <span className="text-purple-400 font-semibold">building practical projects</span> and continuously learning new technologies to <span className="text-cyan-400 font-semibold">solve real-world problems</span>. Passionate about leveraging machine learning and artificial intelligence to create impactful solutions.
+          I&apos;m an <span className="text-white font-semibold">AI/ML Engineer</span> and undergraduate researcher pursuing a Bachelor of Technology in Artificial Intelligence and Machine Learning at Sage University, Indore.
+        </p>
+
+        <p>
+          My focus centers on designing robust machine learning pipelines, predictive modeling, and applied computer vision. From national hackathon platforms to exploratory data dashboards, I combine clean architecture with data-driven algorithms to engineer solutions that deliver measurable real-world value.
         </p>
       </motion.div>
 

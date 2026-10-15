@@ -12,25 +12,25 @@ export const Footer = () => {
               key={column.title}
               className="min-w-[200px] h-auto flex flex-col items-center justify-start"
             >
-              <h3 className="font-bold text-[16px]">{column.title}</h3>
+              <h3 className="font-heading font-bold text-sm tracking-wider uppercase text-white mb-2">{column.title}</h3>
               {column.data.map(({ icon: Icon, name, link }) => (
                 <Link
                   key={`${column.title}-${name}`}
                   href={link}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="flex flex-row items-center my-[15px]"
+                  className="font-sans flex flex-row items-center my-2 text-gray-400 hover:text-cyan-300 transition-colors"
                 >
-                  {Icon && <Icon />}
-                  <span className="text-[15px] ml-[6px]">{name}</span>
+                  {Icon && <Icon className="h-4 w-4" />}
+                  <span className="text-xs sm:text-sm ml-2">{name}</span>
                 </Link>
               ))}
             </div>
           ))}
         </div>
 
-        <div className="mb-[20px] text-[15px] text-center">
-          &copy; Ayush Singh {new Date().getFullYear()} Inc. All rights reserved.
+        <div className="font-sans mt-8 mb-5 text-xs text-center text-gray-500">
+          &copy; {new Date().getFullYear()} Ayush Singh. All rights reserved.
         </div>
       </div>
     </div>

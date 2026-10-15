@@ -56,33 +56,33 @@ export const ContactMe = () => {
         className="Welcome-box py-[8px] px-[7px] border border-[#7042f88b] opacity-[0.9] mb-[20px]"
       >
         <SparklesIcon className="text-[#b49bff] mr-[10px] h-5 w-5" />
-        <h1 className="Welcome-text text-[13px]">Get In Touch</h1>
+        <span className="Welcome-text font-sans text-[12px] font-semibold uppercase tracking-wider">Get In Touch</span>
       </motion.div>
 
       <motion.div
         variants={slideInFromLeft(0.3)}
-        className="w-full max-w-[640px] rounded-lg border border-[#7042f88b] bg-gradient-to-br from-[#2A0E61]/40 to-[#1a0a3a]/40 p-5 backdrop-blur-md sm:p-8"
+        className="w-full max-w-[640px] rounded-2xl border border-purple-500/25 bg-[#0c0628]/85 p-6 backdrop-blur-md sm:p-8 shadow-[0_0_30px_rgba(112,66,248,0.2)]"
       >
         <motion.h2
           variants={slideInFromLeft(0.5)}
-          className="mb-[20px] text-2xl font-semibold text-white sm:text-[32px]"
+          className="mb-3 font-heading text-2xl font-bold tracking-tight text-white sm:text-3xl"
         >
-          Let&apos;s Talk
+          Let&apos;s Connect
         </motion.h2>
 
         <motion.p
           variants={slideInFromLeft(0.6)}
-          className="text-gray-400 mb-[30px] leading-relaxed"
+          className="font-sans text-sm sm:text-[15px] leading-relaxed text-gray-300/90 mb-7"
         >
-          Whether you&apos;re looking to collaborate on an ML project, discuss AI solutions, or just want to chat about data science, I&apos;m here to help!
+          Whether you&apos;re looking to collaborate on an AI/ML project, discuss data science engineering, or explore internship opportunities, my inbox is open!
         </motion.p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <motion.div
             variants={slideInFromLeft(0.7)}
-            className="flex flex-col gap-2"
+            className="flex flex-col gap-1.5"
           >
-            <label htmlFor="fullName" className="text-white font-semibold">
+            <label htmlFor="fullName" className="font-sans text-xs sm:text-sm font-medium text-gray-300">
               Full Name
             </label>
             <input

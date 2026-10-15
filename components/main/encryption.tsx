@@ -11,7 +11,7 @@ export const Encryption = () => {
       <div className="absolute w-auto h-auto top-0 z-[5]">
         <motion.div
           variants={slideInFromTop}
-          className="px-2 text-center text-3xl font-medium text-gray-200 sm:text-4xl"
+          className="px-2 text-center font-heading text-3xl font-bold tracking-tight text-gray-200 sm:text-4xl"
         >
           Performance{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-cyan-500">
@@ -40,12 +40,12 @@ export const Encryption = () => {
         </div>
 
         <div className="Welcome-box px-[15px] py-[4px] z-[20] border my-[20px] border-[#7042F88B] opacity-[0.9]">
-          <h1 className="Welcome-text text-[12px]">Encryption</h1>
+          <span className="Welcome-text font-sans text-[12px] font-semibold uppercase tracking-wider">Encryption</span>
         </div>
       </div>
 
       <div className="absolute bottom-[10px] z-[20] px-[5px]">
-        <div className="cursive px-2 text-center text-base font-medium text-gray-300 sm:text-xl">
+        <div className="cursive font-cursive px-2 text-center text-base font-normal text-gray-300 sm:text-xl">
           Secure your data with end-to-end encryption.
         </div>
       </div>

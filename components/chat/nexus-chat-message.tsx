@@ -179,7 +179,7 @@ export const NexusChatMessage = ({ message, onRetry }: NexusChatMessageProps) =>
       {/* Message Bubble + Timestamp Container */}
       <div className={`flex flex-col max-w-[85%] sm:max-w-[80%] ${isUser ? "items-end" : "items-start"}`}>
         <div
-          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed transition-all break-words ${
+          className={`font-sans rounded-2xl px-4 py-3 text-sm leading-[1.65] transition-all break-words ${
             isUser
               ? "rounded-tr-sm border border-violet-400/30 bg-gradient-to-r from-[#2c135c]/95 via-[#1d144e]/95 to-[#131b46]/95 text-white shadow-md shadow-purple-950/40"
               : message.isError
@@ -194,7 +194,7 @@ export const NexusChatMessage = ({ message, onRetry }: NexusChatMessageProps) =>
               <button
                 type="button"
                 onClick={onRetry}
-                className="text-xs font-medium text-cyan-300 hover:text-cyan-200 underline underline-offset-2 transition-colors"
+                className="font-sans text-xs font-medium text-cyan-300 hover:text-cyan-200 underline underline-offset-2 transition-colors"
               >
                 Retry question
               </button>
@@ -204,7 +204,7 @@ export const NexusChatMessage = ({ message, onRetry }: NexusChatMessageProps) =>
 
         {/* Timestamp */}
         {message.timestamp && (
-          <span className="mt-1 px-1 text-[10px] text-gray-400 select-none">
+          <span className="font-mono mt-1 px-1 text-[10px] text-gray-400 select-none">
             {message.timestamp}
           </span>
         )}

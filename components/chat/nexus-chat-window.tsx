@@ -258,25 +258,25 @@ export const NexusChatWindow = ({ isOpen, onClose }: NexusChatWindowProps) => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span id="nexus-chat-title" className="text-sm font-semibold text-white">
+              <span id="nexus-chat-title" className="font-heading text-sm font-bold tracking-tight text-white">
                 Nexus AI
               </span>
               {isEphemeral ? (
                 <span
                   title="Database migration pending; conversations are retained for this session only"
-                  className="flex items-center gap-1 rounded-full bg-amber-950/60 px-2 py-0.5 text-[10px] font-medium text-amber-300 border border-amber-500/30"
+                  className="font-mono flex items-center gap-1 rounded-full bg-amber-950/60 px-2 py-0.5 text-[10px] font-medium text-amber-300 border border-amber-500/30"
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
                   Ephemeral Session
                 </span>
               ) : (
-                <span className="flex items-center gap-1 rounded-full bg-violet-950/60 px-2 py-0.5 text-[10px] font-medium text-cyan-300 border border-violet-500/30">
+                <span className="font-mono flex items-center gap-1 rounded-full bg-violet-950/60 px-2 py-0.5 text-[10px] font-medium text-cyan-300 border border-violet-500/30">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                   Portfolio Guide
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-gray-400">Personal AI for Ayush Singh</p>
+            <p className="font-sans text-[11px] text-gray-400">Personal AI for Ayush Singh</p>
           </div>
         </div>
 
@@ -323,12 +323,12 @@ export const NexusChatWindow = ({ isOpen, onClose }: NexusChatWindowProps) => {
             <div className="rounded-2xl border border-violet-400/25 bg-[#120a2e]/70 p-4 backdrop-blur-md shadow-sm">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xl">👋</span>
-                <h3 className="text-sm font-semibold text-white">Hey! I&apos;m Nexus AI.</h3>
+                <h3 className="font-heading text-sm font-bold text-white">Hey! I&apos;m Nexus AI.</h3>
               </div>
-              <p className="text-xs text-gray-300 leading-relaxed">
+              <p className="font-sans text-xs text-gray-300 leading-relaxed">
                 I can help you explore Ayush&apos;s projects, technical skills, certifications, and AI/ML experience.
               </p>
-              <p className="mt-2 text-xs font-medium text-cyan-300">
+              <p className="font-sans mt-2 text-xs font-medium text-cyan-300">
                 What would you like to know?
               </p>
             </div>
@@ -348,7 +348,7 @@ export const NexusChatWindow = ({ isOpen, onClose }: NexusChatWindowProps) => {
                       <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-violet-400/30 bg-violet-950/60 text-cyan-300 group-hover:border-cyan-400/50 group-hover:text-cyan-200 transition-colors">
                         <IconComponent className="h-4 w-4" />
                       </div>
-                      <span className="text-xs font-medium text-gray-200 group-hover:text-white transition-colors">
+                      <span className="font-sans text-xs font-medium text-gray-200 group-hover:text-white transition-colors">
                         {prompt.title}
                       </span>
                     </div>
