@@ -52,12 +52,7 @@ const EXPERIENCE_DATA: ExperienceItem[] = [
       "Helped communicate the end-to-end technical solution, containerization strategy, and mathematical baseline models.",
       "Supported the live presentation and demonstration of the environmental AI solution during the 36-hour hackathon.",
     ],
-    capabilities: [
-      "Past-only rolling baseline (Z >= 2.0) and Isolation Forest anomaly scoring to isolate true pollution spikes without lookahead contamination.",
-      "Circular mean surface wind vector analysis to assess atmospheric transport regimes and calm-wind stagnation.",
-      "Geospatial screening and angular alignment ranking of candidate industrial facilities with distance-decay weighting.",
-      "Automated compilation of immutable digital forensic dossiers with structured evidentiary audits.",
-    ],
+    
     technologies: [
       "React.js",
       "Vite",
@@ -95,11 +90,7 @@ const EXPERIENCE_DATA: ExperienceItem[] = [
       "Worked on problem analysis and multimodal workflows addressing remote-sensing analysis and geospatial intelligence.",
       "Collaborated with teammates on project development, testing, and hackathon deliverables.",
     ],
-    capabilities: [
-      "Natural-language visual question answering (VQA) on optical, multispectral, and SAR satellite imagery.",
-      "Bi-temporal change detection and scene description across multi-period Earth observation acquisitions.",
-      "Agentic specialist routing and cross-modal optical-SAR joint interpretation for specialized remote-sensing tasks.",
-    ],
+
     technologies: [
       "Python",
       "PyTorch",
