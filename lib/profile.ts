@@ -113,10 +113,19 @@ export interface ExperienceEntry {
   highlights: string[];
 }
 
+export interface HackathonEvent {
+  title: string;
+  organization: string;
+  date: string;
+  achievement: string;
+  project?: string;
+}
+
 export interface HackathonsInfo {
   status: string;
   description: string;
   policyNote: string;
+  events?: HackathonEvent[];
 }
 
 export interface GroundingRules {

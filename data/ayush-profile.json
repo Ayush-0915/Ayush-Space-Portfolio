@@ -255,16 +255,28 @@
   ],
   "experience": [
     {
-      "role": "B.Tech Student in AI/ML",
-      "organization": "Sage University, Indore",
-      "period": "2024–2028",
-      "type": "Academic Degree",
+      "role": "Deployment & Documentation — Air Kavach (AGNITIA '26)",
+      "organization": "Prestige Institute of Engineering Management and Research (PIEMR), Indore",
+      "period": "October 2026",
+      "type": "National-Level Hackathon (36 Hours)",
       "highlights": [
-        "Pursuing Bachelor of Technology in Artificial Intelligence and Machine Learning.",
-        "Developing hands-on expertise in Machine Learning, Deep Learning, and Data Science.",
-        "Building practical projects using Python, Streamlit, SQL, and modern ML frameworks.",
-        "Studying Computer Vision, Natural Language Processing, and Predictive Analytics.",
-        "Actively participating in technical workshops, hackathons, and coding challenges."
+        "Participated in AGNITIA '26 National-Level Hackathon with Team DeveloperX on Track TERRA02 (Industrial Pollution Source Attribution Engine).",
+        "Secured 5th Place (5th Position) in the national-level competition.",
+        "Contributed to deployment preparation and technical documentation for Air Kavach, an environmental intelligence platform.",
+        "Documented mathematical baseline anomaly detection (Isolation Forest & rolling Z-score), meteorological wind dispersion screening, and digital forensic dossiers.",
+        "Supported presentation and live solution demonstration during the 36-hour hackathon."
+      ]
+    },
+    {
+      "role": "AI/ML Project Developer — SatQuery AI (SIH 2026)",
+      "organization": "Ministry of Education & AICTE (Smart India Hackathon 2026)",
+      "period": "September 2026",
+      "type": "National Hackathon",
+      "highlights": [
+        "Participated in Smart India Hackathon (SIH) 2026 tackling national problem statement SIH26167.",
+        "Contributed to SatQuery AI, an AI vision-language solution for natural-language satellite remote-sensing analysis.",
+        "Worked on problem analysis, multimodal optical and SAR Earth observation workflows, and geospatial intelligence.",
+        "Collaborated on team project development and hackathon technical deliverables."
       ]
     },
     {
@@ -281,6 +293,19 @@
       ]
     },
     {
+      "role": "B.Tech Student in AI/ML",
+      "organization": "Sage University, Indore",
+      "period": "2024–2028",
+      "type": "Academic Degree",
+      "highlights": [
+        "Pursuing Bachelor of Technology in Artificial Intelligence and Machine Learning.",
+        "Developing hands-on expertise in Machine Learning, Deep Learning, and Data Science.",
+        "Building practical projects using Python, Streamlit, SQL, and modern ML frameworks.",
+        "Studying Computer Vision, Natural Language Processing, and Predictive Analytics.",
+        "Actively participating in technical workshops, hackathons, and coding challenges."
+      ]
+    },
+    {
       "role": "AI-Powered Cloud Engineer Virtual Intern",
       "organization": "AICTE & EduSkills (AWS Educate)",
       "period": "January 2026 – March 2026",
@@ -293,9 +318,25 @@
     }
   ],
   "hackathonsAndCompetitions": {
-    "status": "Active Participant",
-    "description": "Actively participates in collegiate hackathons, coding challenges, and technical symposiums at Sage University, Indore.",
-    "policyNote": "Specific event titles, hackathon placements, or competition dates are not formally documented in the public repository. The assistant must state that Ayush actively participates in hackathons and coding events at his university, without fabricating specific tournament names, prize ranks, or dates."
+    "status": "Award-Winning Participant",
+    "description": "Active participant in national hackathons and technical symposiums.",
+    "events": [
+      {
+        "title": "AGNITIA '26 National-Level Hackathon",
+        "organization": "PIEMR, Indore (Team DeveloperX, Track TERRA02)",
+        "project": "Air Kavach",
+        "date": "October 2026",
+        "achievement": "5th Place — National-Level Hackathon (Role: Deployment & Documentation)"
+      },
+      {
+        "title": "Smart India Hackathon (SIH) 2026",
+        "organization": "Problem Statement SIH26167",
+        "project": "SatQuery AI",
+        "date": "September 2026",
+        "achievement": "SIH 2026 Participant (Role: AI/ML Project Developer)"
+      }
+    ],
+    "policyNote": "State documented achievements truthfully: Secured 5th Place at AGNITIA '26 (PIEMR) for Air Kavach (Role: Deployment & Documentation), and SIH 2026 participant working on Problem Statement SIH26167 with project SatQuery AI. Do not claim undocumented SIH awards or extra rounds."
   },
   "groundingRules": {
     "systemRole": "You are the AI portfolio assistant for Ayush Singh, an AI/ML Engineer and undergraduate student at Sage University, Indore.",

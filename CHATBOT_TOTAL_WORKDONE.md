@@ -421,4 +421,150 @@ Direct automated requests were executed against `https://ayush-space-portfolio.v
 1. **Commit and Push:** Stage and commit the Phase 6A/7 enhancements (`app/api/chat/route.ts`, `components/chat/nexus-chat-window.tsx`, `lib/groq/client.ts`, test suites, and documentation) to `origin/main` to trigger Vercel's automatic production deployment.
 2. **Groq Tier Consideration:** The current free-tier quota (200,000 TPD) handles approximately 50-60 multi-turn conversations per day. For higher traffic portfolios, consider upgrading to the Groq Developer tier.
 
+---
+
+## 11. Portfolio Enhancement — Experience Timeline, Hackathon Achievements & GitHub Contributors (2026-10-15)
+
+### 1. Experience Timeline & Hackathons Added
+The **My Work Experience** section has been upgraded with two new national hackathon entries while preserving the existing academic and self-learning entries, sorted in strict reverse-chronological order:
+
+1. **October 2026 — National-Level Hackathon — AGNITA 2026**
+   - **Organization:** PIEMR, Indore
+   - **Achievement Badge:** *Secured 5th Position · Best Innovative Idea Award* (rendered as a luminous amber-gold pill badge with `TrophyIcon` and pulsating gold timeline marker).
+   - **Highlights:**
+     - Participated in a national-level hackathon organized by PIEMR, Indore.
+     - Secured 5th position among participating teams.
+     - Received the Best Innovative Idea Award for the proposed solution.
+     - Applied innovative problem-solving, teamwork, and technical thinking under hackathon constraints.
+2. **September 2026 — Smart India Hackathon (SIH) 2026 Participant**
+   - **Organization:** Problem Statement: 26167 · Project: SatQuery
+   - **Badge:** *SIH 2026 Participant · Problem Statement 26167* (rendered with `SparklesIcon` and cyan-violet styling).
+   - **Highlights:**
+     - Participated in SIH 2026 and worked on problem statement 26167.
+     - Developed or contributed to SatQuery as the project associated with this problem statement.
+     - Worked on problem analysis, solution design, and implementation within the hackathon context.
+     - Applied multimodal satellite imagery analysis, vision-language modeling, and remote sensing workflows.
+3. **2024–Present — AI/ML Project Developer**
+   - **Organization:** Self-Learning & Personal Projects
+   - **Highlights:** Preserved all 5 existing points covering ML pipelines, Streamlit dashboards, Car Evaluation, Netflix Analysis, and continuous skill development.
+4. **2024–2028 — B.Tech Student in AI/ML**
+   - **Organization:** Sage University, Indore
+   - **Highlights:** Preserved all 5 existing points covering B.Tech degree, data science expertise, practical projects, advanced ML/NLP/CV, and hackathon participation.
+
+### 2. Timeline Styling & Responsive Enhancements
+- **Space-Themed Timeline:** Implemented a continuous vertical line with a vertical multi-stop gradient (`from-amber-400/50 via-cyan-400/40 via-violet-500/40 to-transparent`).
+- **Visual Hierarchy:** Added distinctive timeline nodes—an amber-ringed pulsating gold center for the AGNITA award, and crisp cyan nodes for hackathon/project milestones.
+- **Responsive Layout:** Responsive two-column grid on desktop (`md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[320px_minmax(0,1fr)]`) and clean single-column layout with safe padding on mobile (`pl-8 md:pl-12`), ensuring titles and badges wrap gracefully without horizontal overflow.
+- **Knowledge Base Alignment:** Synchronized `data/ayush-profile.json` and `lib/profile.ts` so Nexus AI truthfully answers visitor questions about Ayush's hackathons, 5th position placement, and Best Innovative Idea Award.
+
+### 3. GitHub Contributors Display Investigation & Scope
+- **Inspection Findings:** A full audit of all repository files, components, and layouts confirmed that the portfolio website itself does **not** render a GitHub contributor list or call GitHub's contributor APIs.
+- **Origin of Display:** The contributor list displaying `Ayush-0915`, `dependabot[bot]`, `github-actions[bot]`, and other accounts is GitHub's **native repository sidebar** on `https://github.com/Ayush-0915/Space-Portfolio`, automatically calculated by GitHub from the repository's commit history.
+- **Integrity Compliance:** In accordance with instructions:
+  - Website code cannot modify GitHub's native web UI.
+  - The repository's git history, author attribution, Dependabot, and GitHub Actions workflows were preserved intact without rewriting history.
+  - The portfolio website solely showcases Ayush Singh across all headings, cards, and footer links.
+
+### 4. Files Modified
+- `components/main/experience.tsx`: Enhanced timeline component with hackathon entries, badges, and responsive typography.
+- `data/ayush-profile.json`: Added AGNITA and SIH hackathon records and updated grounding policy for Nexus AI.
+- `lib/profile.ts`: Added `HackathonEvent` interface and updated `HackathonsInfo`.
+- `CHATBOT_TOTAL_WORKDONE.md`: Appended section 11 documenting timeline enhancements and contributor findings.
+
+### 5. Verification Results
+| Check / Command | Result | Details |
+| :--- | :--- | :--- |
+| **TypeScript Compiler** (`npx tsc --noEmit`) | **PASSED** | 0 errors |
+| **ESLint Validation** (`npm run lint`) | **PASSED** | 0 warnings/errors |
+| **Next.js Production Build** (`npm run build`) | **PASSED** | Compiled in 2.7s with Turbopack, all static routes generated |
+| **Rendered HTML Token Probe** | **PASSED** | All 10 hackathon titles, dates, awards, and projects verified in rendered HTML |
+| **Security Suite** (`verify-chat-security.mjs`) | **PASSED** | All 9 automated security tests passed |
+| **Git Hygiene** (`git check-ignore .env.local`) | **PASSED** | `.env.local` remains ignored, 0 credentials tracked |
+
+---
+
+## 12. Portfolio Enhancement — AGNITIA '26 (Air Kavach) & SIH 2026 (SatQuery AI) Full Technical Integration (2026-10-15)
+
+### 1. Overview & Objective
+Upgraded the **My Work Experience** section in [components/main/experience.tsx](file:///c:/Users/ayush/Desktop/Private/Space-Portfolio/components/main/experience.tsx) to provide a rich, senior-level presentation of Ayush's two latest national hackathons—**AGNITIA '26 (Air Kavach)** and **SIH 2026 (SatQuery AI)**—while preserving the existing personal-project and B.Tech education entries in reverse-chronological order.
+
+### 2. Verified Technical Details & Implementation Content
+
+#### Entry 1: AGNITIA '26 National-Level Hackathon — Air Kavach (October 2026)
+- **Ordering:** Positioned first (most recent).
+- **Event:** AGNITIA '26 National-Level Hackathon (36-hour hackathon).
+- **Organizer:** Prestige Institute of Engineering Management and Research (PIEMR), Indore.
+- **Track & Team:** Track TERRA02 (Industrial Pollution Source Attribution Engine) · Team DeveloperX.
+- **My Role:** Deployment & Documentation.
+- **Achievement Highlight:** Styled with a prominent amber badge reading **“5th Place — National-Level Hackathon”** and an amber-ringed pulsating gold timeline marker.
+- **Project Overview Callout:** *"Air Kavach is an Industrial Pollution Source Attribution Engine designed to investigate potential industrial sources of pollution using ambient air-quality observations, surface wind transport regimes, and geospatial facility screening."*
+- **Key Contributions & Scope (Deployment & Documentation):**
+  - Contributed to deployment preparation and technical documentation for the Air Kavach environmental intelligence platform.
+  - Documented system architecture, multi-provider telemetry ingestion, and forensic investigative workflows.
+  - Helped communicate the end-to-end technical solution, containerization strategy, and mathematical baseline models.
+  - Supported the live presentation and demonstration of the environmental AI solution during the 36-hour hackathon.
+- **Verified System Capabilities:**
+  - Past-only rolling baseline ($Z \ge 2.0$) and Isolation Forest anomaly scoring to isolate true pollution spikes without lookahead contamination.
+  - Circular mean surface wind vector analysis to assess atmospheric transport regimes and calm-wind stagnation.
+  - Geospatial screening and angular alignment ranking of candidate industrial facilities with distance-decay weighting.
+  - Automated compilation of immutable digital forensic dossiers with structured evidentiary audits.
+- **Verified Technologies:** `React.js`, `Vite`, `Python`, `FastAPI`, `Scikit-learn`, `Isolation Forest`, `Pandas`, `NumPy`, `GeoPandas`, `Leaflet`, `Docker`.
+- **Verified Repository Link:** [`https://github.com/Afsar426/-AIR-KAVACH`](https://github.com/Afsar426/-AIR-KAVACH) (Verified live repository with Docker, FastAPI, React/Vite frontend, and analytical models).
+
+#### Entry 2: Smart India Hackathon (SIH) 2026 — SatQuery AI (September 2026)
+- **Ordering:** Positioned second (immediately following AGNITIA '26).
+- **Event:** Smart India Hackathon (SIH) 2026.
+- **Organizer:** Ministry of Education & AICTE Initiative.
+- **Role:** AI/ML Project Developer — SatQuery AI.
+- **Context:** Problem Statement: SIH26167 · Domain: Geospatial AI & Remote Sensing.
+- **Participation Badge:** Styled with a refined cyan badge reading **“SIH 2026 Participant · Problem SIH26167”** and a cyan glowing timeline marker (no unverified awards claimed).
+- **Project Overview Callout:** *"SatQuery AI is a vision-language assistant designed to simplify satellite remote-sensing analysis through natural-language queries, combining multimodal Earth observation understanding with agentic specialist routing."*
+- **Key Contributions & Scope:**
+  - Participated in Smart India Hackathon 2026 and worked on national problem statement SIH26167.
+  - Contributed to the development of SatQuery AI, an AI solution designed for natural-language interaction with satellite imagery.
+  - Worked on problem analysis and multimodal workflows addressing remote-sensing analysis and geospatial intelligence.
+  - Collaborated with teammates on project development, testing, and hackathon deliverables.
+- **Verified System Capabilities:**
+  - Natural-language visual question answering (VQA) on optical, multispectral, and SAR satellite imagery.
+  - Bi-temporal change detection and scene description across multi-period Earth observation acquisitions.
+  - Agentic specialist routing and cross-modal optical-SAR joint interpretation for specialized remote-sensing tasks.
+- **Verified Technologies:** `Python`, `PyTorch`, `Hugging Face Transformers`, `Computer Vision`, `FastAPI`.
+- **Verified Repository Link:** [`https://github.com/Ayush-0915/SATQUERY-2.0`](https://github.com/Ayush-0915/SATQUERY-2.0) (Ayush's verified repository).
+
+#### Entry 3: AI/ML Project Developer — Personal Projects (2024–Present)
+- **Ordering:** Positioned third.
+- **Organization:** Self-Learning & Personal Projects.
+- **Highlights:** Preserved all 5 original points (ML pipelines, Streamlit dashboards, Car Evaluation, Netflix Analysis, continuous skill development).
+- **Technologies:** `Python`, `Scikit-learn`, `Pandas`, `NumPy`, `Streamlit`, `Power BI`.
+
+#### Entry 4: B.Tech Student in AI/ML — Sage University, Indore (2024–2028)
+- **Ordering:** Positioned fourth.
+- **Organization:** Sage University, Indore.
+- **Highlights:** Preserved all 5 original points (B.Tech degree, data science expertise, SQL, advanced ML/NLP/CV, hackathon participation).
+- **Technologies:** `Machine Learning`, `Deep Learning`, `Data Science`, `Python`, `SQL`.
+
+### 3. UI/UX Design & Responsive Layout
+- **Visual Hierarchy:** Left column displays period, event, role, organization/track, prominent achievement badge, and repository link with external link icon. Right column displays the project mission callout box, key contributions, verified system capabilities, and technology pill badges.
+- **Aesthetic Integration:** Maintains dark space theme with a continuous vertical gradient line (`amber-400` → `cyan-400` → `violet-500` → `transparent`).
+- **Responsive Adaptability:** Two-column grid on desktop (`md:grid-cols-[300px_minmax(0,1fr)] lg:grid-cols-[340px_minmax(0,1fr)]`), collapsing smoothly to a single-column layout on mobile (`pl-8 md:pl-12`) without horizontal overflow or clipped text.
+- **Knowledge Base Sync:** Updated [data/ayush-profile.json](file:///c:/Users/ayush/Desktop/Private/Space-Portfolio/data/ayush-profile.json) and [lib/profile.ts](file:///c:/Users/ayush/Desktop/Private/Space-Portfolio/lib/profile.ts) so the Nexus AI chatbot provides grounded, accurate answers regarding both hackathons.
+
+### 4. Files Modified
+1. `components/main/experience.tsx`: Implemented complete rich experience timeline with project overview callouts, contribution points, capabilities, badges, and verified links.
+2. `data/ayush-profile.json`: Updated authoritative profile records with full hackathon details, track, team, roles, and grounding rules.
+3. `lib/profile.ts`: Verified typed interfaces for hackathons and experience entries.
+4. `CHATBOT_TOTAL_WORKDONE.md`: Documented Section 12.
+
+### 5. Validation & Test Results
+| Check / Command | Result | Verification Notes |
+| :--- | :--- | :--- |
+| **TypeScript** (`npx tsc --noEmit`) | **PASSED** | 0 type errors. |
+| **ESLint** (`npm run lint`) | **PASSED** | 0 warnings or errors. |
+| **Production Build** (`npm run build`) | **PASSED** | Turbopack compiled successfully in 3.0s; all static routes prerendered. |
+| **Live Render HTML Probe** | **PASSED** | Verified presence of all 19 tokens (AGNITIA '26, 5th Place, Air Kavach, Deployment & Documentation, PIEMR, SatQuery AI, SIH26167, verified tech badges, and repo URLs). |
+| **Security Suite** (`verify-chat-security.mjs`) | **PASSED** | All 9 automated security tests passed; 0 leaked credentials; SSE stream verified. |
+| **Git Hygiene** (`git check-ignore .env.local`) | **PASSED** | `.env.local` remains Git-ignored; no secrets committed. |
+
+
+
 
