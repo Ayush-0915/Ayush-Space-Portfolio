@@ -565,6 +565,85 @@ Upgraded the **My Work Experience** section in [components/main/experience.tsx](
 | **Security Suite** (`verify-chat-security.mjs`) | **PASSED** | All 9 automated security tests passed; 0 leaked credentials; SSE stream verified. |
 | **Git Hygiene** (`git check-ignore .env.local`) | **PASSED** | `.env.local` remains Git-ignored; no secrets committed. |
 
+---
 
+## 13. GitHub Contributor Attribution Forensic Audit & Identity Canonicalization (2026-10-15)
 
+### 1. Objective & Context
+Investigate and resolve extraneous contributor identities appearing in the repository's GitHub sidebar (`https://github.com/Ayush-0915/Space-Portfolio`), specifically:
+- `Sanidhya Kumar Verma`
+- `dependabot[bot]`
+- `github-actions[bot]`
+- `esma`
+- Split identity between `Ayush` and `Ayush Singh`
 
+The goal is to ensure the repository legitimately and technically reflects **Ayush Singh** as the sole author and contributor, without destructively rewriting Git history, deleting genuine external commit history recklessly, or breaking repository tracking.
+
+### 2. Comprehensive Forensic Audit Findings
+
+#### A. Main Branch Commit Authorship (`main` / `origin/main`)
+- Total commits on `main`: **216 commits** (from initial commit `bd20872` to current HEAD `0400f00`).
+- Breakdown by Author & Email on `main`:
+  - `Ayush <ayushofficaluse@gmail.com>`: 209 commits
+  - `Ayush Singh <ayushofficaluse@gmail.com>`: 7 commits
+  - **Sanidhya Kumar Verma**: 0 commits
+  - **dependabot[bot]**: 0 commits
+  - **github-actions[bot]**: 0 commits
+  - **esma**: 0 commits
+- **Key Realization**: The default branch (`main`) is already **100% authored by Ayush** using the canonical email `ayushofficaluse@gmail.com`. Previous repository re-authoring succeeded completely on `main`. No destructive history rewriting of `main` is required or appropriate.
+
+#### B. Location of Extraneous Identities
+A forensic search across all refs (`git branch -a --contains <commit_hash>`) proved that the extra identities exist **strictly in secondary and stale remote references**:
+1. **Local References**:
+   - `refs/heads/history-before-contributor-cleanup`: Local backup branch preserving earlier repository states.
+   - `refs/original/refs/heads/main`: Stale reference created by prior `git filter-branch` runs.
+2. **Remote References on GitHub (`origin`)**:
+   - `origin/dependabot/npm_and_yarn/eslint-10.2.1` (Commit `6aa5c43`)
+   - `origin/dependabot/npm_and_yarn/postcss-8.5.10` (Commit `1b188fc`)
+   - `origin/dependabot/npm_and_yarn/tailwindcss-4.2.2` (Commit `70710fa`)
+   - `origin/dependabot/npm_and_yarn/types/node-25.6.0` (Commit `8c73934`)
+   - `origin/dependabot/npm_and_yarn/typescript-6.0.3` (Commit `1cd913d`)
+3. **Commit Association**:
+   - Commit `da2b44e` (Sanidhya Kumar Verma merge commit) and commit `a1c504a` (esma) are present **only** on the 5 remote Dependabot branches and the local backup branch. They are completely absent from `main`.
+
+#### C. Why GitHub Displays These Contributors
+GitHub's web interface aggregates contributor statistics not solely from `main`, but from all commits reachable by **any active branch or open Pull Request** hosted in the remote repository. Because Dependabot branches branched from an earlier template revision before `main` was re-authored, GitHub indexes those commits and credits their authors in the repository overview. Additionally, GitHub caches contributor graphs and only flushes them after stale branches are deleted or closed.
+
+### 3. Implemented Corrections
+
+#### A. Git Author Canonicalization via `.mailmap`
+Created a standard root-level [.mailmap](file:///c:/Users/ayush/Desktop/Private/Space-Portfolio/.mailmap) to merge the historical `Ayush <ayushofficaluse@gmail.com>` identity into `Ayush Singh <ayushofficaluse@gmail.com>`:
+```mailmap
+Ayush Singh <ayushofficaluse@gmail.com> Ayush <ayushofficaluse@gmail.com>
+```
+- **Verification**: `git shortlog -sne main` consolidates all 216 commits seamlessly to:
+  ```text
+  216  Ayush Singh <ayushofficaluse@gmail.com>
+  ```
+- **Safety**: `.mailmap` is natively respected by Git and GitHub; it canonicalizes author presentation across logs, web interfaces, and blame without altering a single cryptographic commit SHA hash.
+
+#### B. Local Git Client Configuration
+Configured the local Git repository identity to eliminate future naming discrepancies:
+- `git config user.name "Ayush Singh"`
+- `git config user.email "ayushofficaluse@gmail.com"`
+
+### 4. Verification & Validation Results
+| Step / Tool | Result | Details |
+| :--- | :--- | :--- |
+| **`git shortlog -sne main`** | **100% Ayush Singh** | All 216 commits on `main` mapped to single canonical identity. |
+| **Branch Scope Audit** | **VERIFIED** | 0 external commits exist on `main` or `origin/main`. |
+| **TypeScript Validation** (`npx tsc --noEmit`) | **PASSED** | 0 errors. |
+| **ESLint Validation** (`npm run lint`) | **PASSED** | 0 errors, 0 warnings. |
+| **Production Build** (`npm run build`) | **PASSED** | Next.js Turbopack compiled successfully in 2.8s; all routes valid. |
+| **Git Hygiene** (`git check-ignore .env.local`) | **PASSED** | Credentials remain isolated and git-ignored. |
+
+### 5. Final Recommended GitHub Purge Steps
+To clean up GitHub's remote sidebar contributor list, the remaining action is to delete or close the 5 stale Dependabot branches on GitHub:
+```bash
+git push origin --delete dependabot/npm_and_yarn/eslint-10.2.1
+git push origin --delete dependabot/npm_and_yarn/postcss-8.5.10
+git push origin --delete dependabot/npm_and_yarn/tailwindcss-4.2.2
+git push origin --delete dependabot/npm_and_yarn/types/node-25.6.0
+git push origin --delete dependabot/npm_and_yarn/typescript-6.0.3
+```
+Once these remote branches are deleted and their corresponding PRs closed, GitHub's reachability graph will contain only `main` (100% Ayush Singh commits), and the contributor cache will refresh.
